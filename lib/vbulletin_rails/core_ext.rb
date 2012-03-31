@@ -48,7 +48,12 @@ module ActiveRecord
     # Filter launched <tt>after_update</tt>, updates VBulletin user password
     def update_vbulletin
       vb_user = VBulletinRails::User.find_by_email(register_parameter_from_user_model(:email))
-      vb_user.update_attributes(:password => register_parameter_from_user_model(:password))
+      if vb_user.nil?
+        vb_user = VBulletinRails::User.find_by_username(register_parameter_from_user_model(:username))
+        vb_user.update_attributes(:email => register_parameter_from_user_model(:email))
+      else
+        vb_user.update_attributes(:password => register_parameter_from_user_model(:password))
+      end
     end
 
     # Filter launched <tt>before_validation</tt>, won't allow using it model to validate unless VBulletin validates properly
